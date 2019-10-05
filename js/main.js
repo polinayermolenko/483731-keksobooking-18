@@ -19,6 +19,12 @@ var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditio
 var DESCRIPTION = ['Описание 1', 'Описание 2', 'Описание 3'];
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 
+var houseTypes = {
+  'palace': 'Дворец',
+  'flat': 'Квартира',
+  'house': 'Дом',
+  'bungalo': 'Бунгало'
+};
 /**
  *Генерирует случайную координату метки по оси х в заданном диапазоне чисел
  *@param {number} minLocation - минимальное значение
@@ -55,12 +61,10 @@ var getArrayElement = function (array) {
 /**
 *Генирурует путь до аватара пользователя
 *@param {number} number - число, входящее в название фотографии
-*@return {Object} - путь до аватара
+*@return {String} - путь до аватара
 */
 var generateAvatar = function (number) {
-  var avatar = {
-    'avatar': 'img/avatars/user0' + number + '.png'
-  };
+  var avatar = 'img/avatars/user0' + number + '.png';
   return avatar;
 };
 
@@ -85,7 +89,7 @@ var generateAvatar = function (number) {
 var generateOffer = function (title, minX, maxX, minY, maxY, price, type, rooms, guests, checkin, checkout, features, description, photos) {
   var offer = {
     'title': getArrayElement(title),
-    'address': generateLocationX(minX, maxX) + ',' + generateLocationY(minY, maxY),
+    'address': generateLocationX(minX, maxX) + ', ' + generateLocationY(minY, maxY),
     'price': getArrayElement(price),
     'type': getArrayElement(type),
     'rooms': getArrayElement(rooms),
@@ -108,7 +112,9 @@ var generateAds = function (adsNumber) {
   var array = [];
   for (var i = 1; i <= adsNumber; i++) {
     var advertisement = {
-      'author': generateAvatar(i),
+      'author': {
+        'avatar': generateAvatar(i)
+      },
       'offer': generateOffer(TITLE, MIN_LOCATION_X, MAX_LOCATION_X, MIN_LOCATION_Y, MAX_LOCATION_Y, PRICE, TYPE, ROOMS, GUESTS, CHECKIN, CHECKOUT, FEATURES, DESCRIPTION, PHOTOS),
       'location': {
         'x': generateLocationX(MIN_LOCATION_X, MAX_LOCATION_X),
@@ -133,10 +139,10 @@ var renderPins = function (adsArray) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < adsArray.length; i++) {
     var pin = pinTemplate.cloneNode(true);
-    pin.style = 'left: ' + (adsArray[i]['location']['x'] - PIN_WIDTH / 2) + 'px; top: ' + (adsArray[i]['location']['y'] - PIN_HEIGHT) + 'px;';
+    pin.style = 'left: ' + (adsArray[i].location.x - PIN_WIDTH / 2) + 'px; top: ' + (adsArray[i].location.y - PIN_HEIGHT) + 'px;';
     var pinImage = pin.querySelector('img');
-    pinImage.src = adsArray[i]['author']['avatar'];
-    pinImage.alt = adsArray[i]['offer']['title'];
+    pinImage.src = adsArray[i].author.avatar;
+    pinImage.alt = adsArray[i].offer.title;
     fragment.appendChild(pin);
   }
   mapPin.appendChild(fragment);
@@ -144,3 +150,29 @@ var renderPins = function (adsArray) {
 
 renderPins(generateAds(ADVERTISMENT_NUMBER));
 
+var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
+
+/**
+*Отрисовывает объявления на основе данных из массива объявлений
+*@param {Array} adsArray - массив объявлений полученный функцией generateAds
+*/
+var renderCards = function (adsArray) {
+  var cardFragment = document.createDocumentFragment();
+  for (var i = 0; i < adsArray.length; i++) {
+    var card = cardTemplate.cloneNode(true);
+    card.querySelector('.popup__title').textContent = adsArray[i].offer.title;
+    card.querySelector('.popup__text--address').textContent = adsArray[i].offer.address;
+    card.querySelector('.popup__text--price').textContent = adsArray[i].offer.price + '₽/ночь';
+    card.querySelector('.popup__type').textContent = houseTypes[adsArray[i].offer.type];
+    card.querySelector('.popup__text--capacity').textContent = adsArray[i].offer.rooms + ' комнаты для ' + adsArray[i].offer.guests + ' гостей';
+    card.querySelector('.popup__text--time').textContent = 'Заезд после ' + adsArray[i].offer.checkin + ', ' + 'выезд до ' + adsArray[i].offer.checkout;
+    card.querySelector('.popup__features').textContent = adsArray[i].offer.features;
+    card.querySelector('.popup__description').textContent = adsArray[i].offer.description;
+    card.querySelector('.popup__photo').src = adsArray[i].offer.photos;
+    card.querySelector('.popup__avatar').src = adsArray[i].author.avatar;
+    cardFragment.appendChild(card);
+  }
+  map.appendChild(cardFragment);
+};
+
+renderCards(generateAds(ADVERTISMENT_NUMBER));
