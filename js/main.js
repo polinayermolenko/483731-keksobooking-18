@@ -2,6 +2,7 @@
 
 var ADVERTISMENT_NUMBER = 8;
 var ENTER_KEYCODE = 13;
+var ESC_KEYCODE = 27;
 var LocationMap = {
   MIN_X: 0,
   MAX_X: 1200,
@@ -37,6 +38,12 @@ var HouseTypes = {
 
 var mapPinMain = document.querySelector('.map__pin--main');
 
+/**
+ * Выбирает случайное целое число в заданном интервале чисел
+ * @param {number} min - минимальная граница диапазона чисел
+ * @param {number} max - максимальная граница диапазона чисел
+ * @return {number} - случайное целое число
+ */
 var generateRandomNumberFromRange = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -57,7 +64,6 @@ var getArrayElement = function (array) {
  * @param {number} adsNumber - количество необходимых объявлений
  * @return {Array} - массив объявлений
  */
-
 var generateAds = function (adsNumber) {
   var array = [];
   for (var i = 1; i <= adsNumber; i++) {
@@ -90,20 +96,50 @@ var generateAds = function (adsNumber) {
   return array;
 };
 
-var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-var mapPin = document.querySelector('.map__pins');
 var map = document.querySelector('.map');
-var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
-
 var ads = generateAds(ADVERTISMENT_NUMBER);
+
+var closePopup = function (popup) {
+  popup.classList.add('hidden');
+};
+
+var onButtonCloseClick = function (setupClose, popup) {
+  setupClose.addEventListener('click', function () {
+    closePopup(popup);
+  });
+};
+
+var onEscPress = function (setupClose, popup) {
+  setupClose.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      closePopup(popup);
+    }
+  });
+};
+
+var onPinClick = function (pinItem, cardItem) {
+  pinItem.addEventListener('click', function () {
+    renderCards(cardItem);
+  });
+};
+
+var onEnterPress = function (pinItem, cardItem) {
+  pinItem.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      renderCards(cardItem);
+    }
+  });
+};
 
 /**
  * Отрисовывает метки на основе данных из массива объявлений
  * @param {Array} adsArray - массив объявлений полученный функцией generateAds
  */
-
 var renderPins = function (adsArray) {
+  var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+  var mapPin = document.querySelector('.map__pins');
   var fragment = document.createDocumentFragment();
+
   for (var i = 0; i < adsArray.length; i++) {
     var pin = pinTemplate.cloneNode(true);
     pin.style = 'left: ' + (adsArray[i].location.x - Pin.WIDTH / 2) + 'px; top: ' + (adsArray[i].location.y - Pin.HEIGHT) + 'px;';
@@ -111,40 +147,51 @@ var renderPins = function (adsArray) {
     pinImage.src = adsArray[i].author.avatar;
     pinImage.alt = adsArray[i].offer.title;
     fragment.appendChild(pin);
+
+    onPinClick(pin, adsArray[i]);
+    onEnterPress(pin, adsArray[i]);
   }
   mapPin.appendChild(fragment);
 };
 
+/*
+ * Добавляет <img> в разметку
+ * @param {node} - HTML node
+ */
+var addPhotos = function (node) {
+  var divPhotos = node.querySelector('.popup__photos');
+  for (var j = 1; j < PHOTOS.length; j++) {
+    var newImg = node.querySelector('.popup__photo').cloneNode(true);
+    newImg.src = PHOTOS[j];
+    divPhotos.appendChild(newImg);
+  }
+};
+
 /**
  * Отрисовывает объявления на основе данных из массива объявлений
- * @param {Array} adsArray - массив объявлений полученный функцией generateAds
+ * @param {Array} adsItem - одно объявление из массива объявлений, полученного функцией generateAds
  */
+var renderCards = function (adsItem) {
+  var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
+  var card = cardTemplate.cloneNode(true);
+  var cardClose = card.querySelector('.popup__close');
 
-var renderCards = function (adsArray) {
-  var cardFragment = document.createDocumentFragment();
-  for (var i = 0; i < adsArray.length; i++) {
-    var card = cardTemplate.cloneNode(true);
-    card.querySelector('.popup__avatar').src = adsArray[i].author.avatar;
-    card.querySelector('.popup__title').textContent = adsArray[i].offer.title;
-    card.querySelector('.popup__text--address').textContent = adsArray[i].offer.address;
-    card.querySelector('.popup__text--price').textContent = adsArray[i].offer.price + '₽/ночь';
-    card.querySelector('.popup__type').textContent = HouseTypes[adsArray[i].offer.type];
-    card.querySelector('.popup__text--capacity').textContent = adsArray[i].offer.rooms + ' комнаты для ' + adsArray[i].offer.guests + ' гостей';
-    card.querySelector('.popup__text--time').textContent = 'Заезд после ' + adsArray[i].offer.checkin + ', ' + 'выезд до ' + adsArray[i].offer.checkout;
-    card.querySelector('.popup__features').textContent = adsArray[i].offer.features;
-    card.querySelector('.popup__description').textContent = adsArray[i].offer.description;
-    card.querySelector('.popup__photo').src = PHOTOS[0];
+  onButtonCloseClick(cardClose, card);
+  onEscPress(cardClose, card);
 
-    var divPhotos = card.querySelector('.popup__photos');
-    for (var j = 1; j < PHOTOS.length; j++) {
-      var newImg = card.querySelector('.popup__photo').cloneNode(true);
-      newImg.src = PHOTOS[j];
-      divPhotos.appendChild(newImg);
-    }
+  addPhotos(card);
+  card.querySelector('.popup__avatar').src = adsItem.author.avatar;
+  card.querySelector('.popup__title').textContent = adsItem.offer.title;
+  card.querySelector('.popup__text--address').textContent = adsItem.offer.address;
+  card.querySelector('.popup__text--price').textContent = adsItem.offer.price + '₽/ночь';
+  card.querySelector('.popup__type').textContent = HouseTypes[adsItem.offer.type];
+  card.querySelector('.popup__text--capacity').textContent = adsItem.offer.rooms + ' комнаты для ' + adsItem.offer.guests + ' гостей';
+  card.querySelector('.popup__text--time').textContent = 'Заезд после ' + adsItem.offer.checkin + ', ' + 'выезд до ' + adsItem.offer.checkout;
+  card.querySelector('.popup__features').textContent = adsItem.offer.features;
+  card.querySelector('.popup__description').textContent = adsItem.offer.description;
+  card.querySelector('.popup__photo').src = PHOTOS[0];
 
-    cardFragment.appendChild(card);
-  }
-  map.appendChild(cardFragment);
+  map.appendChild(card);
 };
 
 var addressInput = document.querySelector('input[name=address]');
@@ -153,6 +200,11 @@ addressInput.setAttribute('readonly', 'readonly');
 var xMuffin = parseInt(mapPinMain.style.left, 10);
 var yMuffin = parseInt(mapPinMain.style.top, 10);
 
+/*
+ * Устанавливает координаты главной метки при неактивном режиме страницы
+ * @param {number} muffinLocationX - координата по оси х
+ * @param {number} muffinLocationY - координата по оси у
+ */
 var setDefaultAddress = function (muffinLocationX, muffinLocationY) {
   var xMuffinInactive = muffinLocationX + MainPin.WIDTH / 2;
   var yMuffinInactive = muffinLocationY + MainPin.HEIGHT / 2;
@@ -161,6 +213,11 @@ var setDefaultAddress = function (muffinLocationX, muffinLocationY) {
 
 setDefaultAddress(xMuffin, yMuffin);
 
+/*
+ * Устанавливает координаты главной метки при активном режиме страницы
+ * @param {number} muffinLocationX - координата по оси х
+ * @param {number} muffinLocationY - координата по оси у
+ */
 var setAddress = function (muffinLocationX, muffinLocationY) {
   var xMuffinActive = muffinLocationX + MainPin.WIDTH / 2;
   var yMuffinActive = muffinLocationY + MainPin.HEIGHT + MainPin.POINTER;
@@ -169,30 +226,21 @@ var setAddress = function (muffinLocationX, muffinLocationY) {
 
 var adForm = document.querySelector('.ad-form');
 
-/* если форма в неактивном состоянии, т е при открытии страницы, на всех филдсетах стоит дизэйбл,
-   если в активном состоянии, которое наступает после нажатия на кнопку миши или при энтере,
-   атрибуты снимаются
-*/
-
-var fieldsets = document.querySelectorAll('fieldset');
-
-
-window.addEventListener('load', function () {
-  for (var i = 0; i < fieldsets.length; i++) {
-    fieldsets[i].setAttribute('disabled', 'disabled');
-  }
-});
-
-var activateForm = function () {
-  for (var j = 0; j < fieldsets.length; j++) {
-    fieldsets[j].removeAttribute('disabled');
-  }
+var activateForm = function (enable) {
+  var fieldsets = document.querySelectorAll('fieldset');
+  fieldsets.forEach(function (fieldset) {
+    if (enable) {
+      fieldset.removeAttribute('disabled');
+    } else {
+      fieldset.setAttribute('disabled', 'disabled');
+    }
+  });
 };
 
 var activatePage = function () {
-  activateForm();
+  activateForm(true);
   renderPins(ads);
-  renderCards(ads);
+  renderCards(ads[0]);
   setAddress(xMuffin, yMuffin);
   map.classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
@@ -266,3 +314,31 @@ guestsSelect.addEventListener('change', function () {
   }
 });
 
+
+/* Синхронизация полей «Время заезда» и «Время выезда»*/
+var timeinSelect = document.querySelector('#timein');
+var timeoutSelect = document.querySelector('#timeout');
+
+timeinSelect.addEventListener('change', function () {
+  timeoutSelect.value = timeinSelect.value;
+});
+
+timeoutSelect.addEventListener('change', function () {
+  timeinSelect.value = timeoutSelect.value;
+});
+
+/* Минимальное значение поля «Цена за ночь» зависит от значения поля «Тип жилья» */
+var typeHouse = document.querySelector('#type');
+var price = document.querySelector('#price');
+
+var MinHousePrice = {
+  'bungalo': 0,
+  'flat': 1000,
+  'house': 5000,
+  'palace': 10000
+};
+
+typeHouse.addEventListener('change', function () {
+  price.setAttribute('min', MinHousePrice[typeHouse.value]);
+  price.setAttribute('placeholder', MinHousePrice[typeHouse.value]);
+});
