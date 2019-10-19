@@ -29,7 +29,7 @@ var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditio
 var DESCRIPTIONS = ['Описание 1', 'Описание 2', 'Описание 3', 'Описание 4', 'Описание 5'];
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 
-var HouseTypes = {
+var houseTypes = {
   'palace': 'Дворец',
   'flat': 'Квартира',
   'house': 'Дом',
@@ -184,7 +184,7 @@ var renderCards = function (adsItem) {
   card.querySelector('.popup__title').textContent = adsItem.offer.title;
   card.querySelector('.popup__text--address').textContent = adsItem.offer.address;
   card.querySelector('.popup__text--price').textContent = adsItem.offer.price + '₽/ночь';
-  card.querySelector('.popup__type').textContent = HouseTypes[adsItem.offer.type];
+  card.querySelector('.popup__type').textContent = houseTypes[adsItem.offer.type];
   card.querySelector('.popup__text--capacity').textContent = adsItem.offer.rooms + ' комнаты для ' + adsItem.offer.guests + ' гостей';
   card.querySelector('.popup__text--time').textContent = 'Заезд после ' + adsItem.offer.checkin + ', ' + 'выезд до ' + adsItem.offer.checkout;
   card.querySelector('.popup__features').textContent = adsItem.offer.features;
@@ -331,7 +331,7 @@ timeoutSelect.addEventListener('change', function () {
 var typeHouse = document.querySelector('#type');
 var price = document.querySelector('#price');
 
-var MinHousePrice = {
+var minHousePrice = {
   'bungalo': 0,
   'flat': 1000,
   'house': 5000,
@@ -339,6 +339,6 @@ var MinHousePrice = {
 };
 
 typeHouse.addEventListener('change', function () {
-  price.setAttribute('min', MinHousePrice[typeHouse.value]);
-  price.setAttribute('placeholder', MinHousePrice[typeHouse.value]);
+  price.setAttribute('min', minHousePrice[typeHouse.value]);
+  price.setAttribute('placeholder', minHousePrice[typeHouse.value]);
 });
