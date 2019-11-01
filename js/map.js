@@ -2,7 +2,7 @@
 
 (function () {
   var MainPin = {
-    WIDTH: 40,
+    WIDTH: 62,
     HEIGHT: 44,
     POINTER: 22
   };
@@ -34,10 +34,30 @@
  * @param {number} muffinLocationX - координата по оси х
  * @param {number} muffinLocationY - координата по оси у
  */
-  var setAddress = function (muffinLocationX, muffinLocationY) {
-    var xMuffinActive = muffinLocationX + MainPin.WIDTH / 2;
-    var yMuffinActive = muffinLocationY + MainPin.HEIGHT + MainPin.POINTER;
-    addressInput.value = xMuffinActive + ', ' + yMuffinActive;
+  var setAddress = function (pin, shiftX, shiftY) {
+    var mainPinX = pin.offsetLeft - shiftX;
+    var mainPinY = pin.offsetTop - shiftY;
+
+
+    if (mainPinY < window.data.locationMap.MIN_Y - (MainPin.HEIGHT + MainPin.POINTER)) {
+      mapPinMain.style.top = window.data.locationMap.MIN_Y - (MainPin.HEIGHT + MainPin.POINTER) + 'px';
+    } else if (mainPinY > window.data.locationMap.MAX_Y - (MainPin.HEIGHT + MainPin.POINTER)) {
+      mapPinMain.style.top = window.data.locationMap.MAX_Y - (MainPin.HEIGHT + MainPin.POINTER) + 'px';
+    } else {
+      mapPinMain.style.top = mainPinY + 'px';
+      mainPinY = mainPinY + MainPin.HEIGHT + MainPin.POINTER;
+    }
+
+    if (mainPinX < window.data.locationMap.MIN_X - MainPin.WIDTH / 2) {
+      mapPinMain.style.left = window.data.locationMap.MIN_X - MainPin.WIDTH / 2 + 'px';
+    } else if (mainPinX > window.data.locationMap.MAX_X - MainPin.WIDTH / 2) {
+      mapPinMain.style.left = window.data.locationMap.MAX_X - MainPin.WIDTH / 2 + 'px';
+    } else {
+      mapPinMain.style.left = mainPinX + 'px';
+      mainPinX = mainPinX + MainPin.WIDTH / 2;
+    }
+
+    addressInput.value = mainPinX + ', ' + mainPinY;
   };
 
   var adForm = document.querySelector('.ad-form');
@@ -55,28 +75,80 @@
 
   var activatePage = function () {
     activateForm(true);
-    window.pin.renderPins(window.data.ads);
-    window.card.renderCards(window.data.ads[0]);
-    setAddress(xMuffin, yMuffin);
+    window.load(window.pin.renderPins, errorHandler);
+    window.load(window.card.renderCards, errorHandler);
+
+
     mapClass.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
+
+    mapPinMain.removeEventListener('mousedown', onMouseDown);
+    mapPinMain.removeEventListener('keydown', onButtonEnterPress);
   };
 
-  var onButtonPress = function () {
+  var onMouseDown = function (downEvt) {
+    downEvt.preventDefault();
     activatePage();
-    mapPinMain.removeEventListener('mousedown', onButtonPress);
+
+    var startCoords = {
+      x: downEvt.clientX,
+      y: downEvt.clientY
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+
+      setAddress(mapPinMain, shift.x, shift.y);
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      mapPinMain.addEventListener('mousedown', onMouseDown);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   };
 
   var onButtonEnterPress = function (evt) {
     if (evt.keyCode === window.card.ENTER_KEYCODE) {
       activatePage();
-      mapPinMain.removeEventListener('keydown', onButtonEnterPress);
     }
   };
 
-  mapPinMain.addEventListener('mousedown', onButtonPress);
+  mapPinMain.addEventListener('mousedown', onMouseDown);
 
   mapPinMain.addEventListener('keydown', onButtonEnterPress);
+
+  var errorHandler = function (errorMessage) {
+    var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+    var errorContainer = errorTemplate.querySelector('.error__message');
+    var errorButton = errorTemplate.querySelector('.error__button');
+
+    errorContainer.textContent = errorMessage;
+
+    errorButton.addEventListener('click', function () {
+      errorTemplate.classList.add('hidden');
+    });
+
+    var error = errorTemplate.cloneNode(true);
+
+    mapClass.appendChild(error);
+  };
 
   window.map = {
     mapClass: mapClass
