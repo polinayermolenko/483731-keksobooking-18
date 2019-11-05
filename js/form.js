@@ -1,8 +1,8 @@
 'use strict';
 
 (function () {
-  var roomsSelect = document.querySelector('#room_number');
-  var guestsSelect = document.querySelector('#capacity');
+  window.roomsSelect = document.querySelector('#room_number');
+  window.guestsSelect = document.querySelector('#capacity');
 
   roomsSelect.addEventListener('change', function () {
     if (roomsSelect.value === '1' && guestsSelect.value !== '1') {
@@ -55,8 +55,8 @@
 
 
   /* Синхронизация полей «Время заезда» и «Время выезда»*/
-  var timeinSelect = document.querySelector('#timein');
-  var timeoutSelect = document.querySelector('#timeout');
+  window.timeinSelect = document.querySelector('#timein');
+  window.timeoutSelect = document.querySelector('#timeout');
 
   timeinSelect.addEventListener('change', function () {
     timeoutSelect.value = timeinSelect.value;
@@ -67,10 +67,10 @@
   });
 
   /* Минимальное значение поля «Цена за ночь» зависит от значения поля «Тип жилья» */
-  var typeHouse = document.querySelector('#type');
-  var price = document.querySelector('#price');
+  window.typeHouse = document.querySelector('#type');
+  window.price = document.querySelector('#price');
 
-  var minHousePrice = {
+  window.minHousePrice = {
     'bungalo': 0,
     'flat': 1000,
     'house': 5000,

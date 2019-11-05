@@ -8,8 +8,14 @@
 
   var onPinClick = function (pinItem, cardItem) {
     pinItem.addEventListener('click', function () {
-      window.card.renderCards(cardItem);
-    });
+
+ if (window.map.mapClass.contains(window.cardNode)) {
+      window.map.mapClass.removeChild(window.cardNode);
+    }
+    window.card.renderCards(cardItem);
+  });
+
+
   };
 
   var onEnterPress = function (pinItem, cardItem) {
@@ -24,24 +30,30 @@
    * Отрисовывает метки на основе данных из массива объявлений
    * @param {Array} adsArray - массив объявлений полученный функцией generateAds
    */
+   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+   window.mapPin = document.querySelector('.map__pins');
   window.pin = {
-    renderPins: function (adsArray) {
-      var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-      var mapPin = document.querySelector('.map__pins');
-      var fragment = document.createDocumentFragment();
+    renderPins: function (advertisment) {
+        window.buttonPin = pinTemplate.cloneNode(true);
+        buttonPin.style = 'left: ' + (advertisment.location.x - Pin.WIDTH / 2) + 'px; top: ' + (advertisment.location.y - Pin.HEIGHT) + 'px;';
+        var pinImage = buttonPin.querySelector('img');
+        pinImage.src = advertisment.author.avatar;
+        pinImage.alt = advertisment.offer.title;
 
-      for (var i = 0; i < adsArray.length; i++) {
-        var pin = pinTemplate.cloneNode(true);
-        pin.style = 'left: ' + (adsArray[i].location.x - Pin.WIDTH / 2) + 'px; top: ' + (adsArray[i].location.y - Pin.HEIGHT) + 'px;';
-        var pinImage = pin.querySelector('img');
-        pinImage.src = adsArray[i].author.avatar;
-        pinImage.alt = adsArray[i].offer.title;
-        fragment.appendChild(pin);
+        onPinClick(buttonPin, advertisment);
+        onEnterPress(buttonPin, advertisment);
 
-        onPinClick(pin, adsArray[i]);
-        onEnterPress(pin, adsArray[i]);
-      }
-      mapPin.appendChild(fragment);
+      return buttonPin;
     }
   };
+
+  window.handleSuccessGetData = function (advertisments) {
+    var fragment = document.createDocumentFragment();
+    advertisments.forEach(function (adv) {
+      fragment.appendChild(pin.renderPins(adv));
+    })
+    mapPin.appendChild(fragment);
+    window.renderCards(advertisments[0]);
+  };
+
 })();
