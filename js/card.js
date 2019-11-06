@@ -11,8 +11,13 @@
     'bungalo': 'Бунгало'
   };
 
+  var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
+  var cardNode = cardTemplate.cloneNode(true);
+  var cardClose = cardNode.querySelector('.popup__close');
+
   var closePopup = function (popup) {
-    popup.classList.add('hidden');
+    /* popup.classList.add('hidden');*/
+    window.map.mapClass.removeChild(popup);
   };
 
   var clickCloseButton = function (setupClose, popup) {
@@ -37,7 +42,10 @@
   var addPhotos = function (node, data) {
     var divPhotos = node.querySelector('.popup__photos');
     for (var j = 1; j < data.offer.photos.length; j++) {
-      var newImg = node.querySelector('.popup__photo').cloneNode(true);
+      var newImg = document.createElement('img');
+      newImg.classList.add('popup__photo');
+      newImg.width = '55px';
+      newImg.height = '40px';
       newImg.src = data.offer.photos[j];
       divPhotos.appendChild(newImg);
     }
@@ -49,10 +57,6 @@
    */
 
   var renderCards = function (adsItem) {
-    var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
-    var cardNode = cardTemplate.cloneNode(true);
-    var cardClose = cardNode.querySelector('.popup__close');
-
     clickCloseButton(cardClose, cardNode);
     pressEsc(cardClose, cardNode);
 
@@ -61,7 +65,6 @@
     }
 
     addPhotos(cardNode, adsItem);
-
 
     cardNode.querySelector('.popup__avatar').src = adsItem.author.avatar;
     cardNode.querySelector('.popup__title').textContent = adsItem.offer.title;
@@ -79,6 +82,8 @@
   window.card = {
     renderCards: renderCards,
     ESC_KEYCODE: ESC_KEYCODE,
-    ENTER_KEYCODE: ENTER_KEYCODE
+    ENTER_KEYCODE: ENTER_KEYCODE,
+    cardTemplate: cardTemplate,
+    cardNode: cardNode
   };
 })();

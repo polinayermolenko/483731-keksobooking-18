@@ -188,12 +188,12 @@
     mapClass.classList.add('map--faded');
     adForm.classList.add('ad-form--disabled');
 
-    var pins = window.mapPin.querySelectorAll('.map__pin:not(.map__pin--main)');
+    var pins = window.pin.mapPin.querySelectorAll('.map__pin:not(.map__pin--main)');
     pins.forEach(function (pin) {
-      window.mapPin.removeChild(pin);
+      window.pin.mapPin.removeChild(pin);
     });
 
-    mapClass.removeChild(window.cardNode);
+    mapClass.removeChild(window.card.cardNode);
   };
 
   var handleSuccessSubmitForm = function () {

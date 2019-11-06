@@ -9,13 +9,11 @@
   var onPinClick = function (pinItem, cardItem) {
     pinItem.addEventListener('click', function () {
 
-      if (window.map.mapClass.contains(window.cardNode)) {
-        window.map.mapClass.removeChild(window.cardNode);
+      if (window.map.mapClass.contains(window.card.cardNode)) {
+        window.map.mapClass.removeChild(window.card.cardNode);
       }
       window.card.renderCards(cardItem);
     });
-
-
   };
 
   var onEnterPress = function (pinItem, cardItem) {
@@ -57,6 +55,7 @@
   };
 
   window.pin = {
-    renderPins: renderPins
+    renderPins: renderPins,
+    mapPin: mapPin
   };
 })();
