@@ -9,13 +9,20 @@
     DEFAULTY: 375
   };
 
+  var LocationMap = {
+    MIN_X: 0,
+    MAX_X: 1200,
+    MIN_Y: 130,
+    MAX_Y: 630
+  };
+
   var mapPinMain = document.querySelector('.map__pin--main');
   var mapClass = document.querySelector('.map');
   var adForm = document.querySelector('.ad-form');
 
+
   var addressInput = document.querySelector('input[name=address]');
-  var titleInput = document.querySelector('input[name=title]');
-  var descriptionInput = document.querySelector('textarea[name=description]');
+
   addressInput.setAttribute('readonly', 'readonly');
 
   var xMuffin = parseInt(mapPinMain.style.left, 10);
@@ -44,19 +51,19 @@
     var mainPinY = pin.offsetTop - shiftY;
 
 
-    if (mainPinY < window.data.locationMap.MIN_Y - (MainPin.HEIGHT + MainPin.POINTER)) {
-      mapPinMain.style.top = window.data.locationMap.MIN_Y - (MainPin.HEIGHT + MainPin.POINTER) + 'px';
-    } else if (mainPinY > window.data.locationMap.MAX_Y - (MainPin.HEIGHT + MainPin.POINTER)) {
-      mapPinMain.style.top = window.data.locationMap.MAX_Y - (MainPin.HEIGHT + MainPin.POINTER) + 'px';
+    if (mainPinY < LocationMap.MIN_Y - (MainPin.HEIGHT + MainPin.POINTER)) {
+      mapPinMain.style.top = LocationMap.MIN_Y - (MainPin.HEIGHT + MainPin.POINTER) + 'px';
+    } else if (mainPinY > LocationMap.MAX_Y - (MainPin.HEIGHT + MainPin.POINTER)) {
+      mapPinMain.style.top = LocationMap.MAX_Y - (MainPin.HEIGHT + MainPin.POINTER) + 'px';
     } else {
       mapPinMain.style.top = mainPinY + 'px';
       mainPinY = mainPinY + MainPin.HEIGHT + MainPin.POINTER;
     }
 
-    if (mainPinX < window.data.locationMap.MIN_X - MainPin.WIDTH / 2) {
-      mapPinMain.style.left = window.data.locationMap.MIN_X - MainPin.WIDTH / 2 + 'px';
-    } else if (mainPinX > window.data.locationMap.MAX_X - MainPin.WIDTH / 2) {
-      mapPinMain.style.left = window.data.locationMap.MAX_X - MainPin.WIDTH / 2 + 'px';
+    if (mainPinX < LocationMap.MIN_X - MainPin.WIDTH / 2) {
+      mapPinMain.style.left = LocationMap.MIN_X - MainPin.WIDTH / 2 + 'px';
+    } else if (mainPinX > LocationMap.MAX_X - MainPin.WIDTH / 2) {
+      mapPinMain.style.left = LocationMap.MAX_X - MainPin.WIDTH / 2 + 'px';
     } else {
       mapPinMain.style.left = mainPinX + 'px';
       mainPinX = mainPinX + MainPin.WIDTH / 2;
@@ -71,17 +78,28 @@
     var filters = document.querySelectorAll('.map__filter');
 
     fieldsets.forEach(function (fieldset) {
-      enable ? fieldset.removeAttribute('disabled') : fieldset.setAttribute('disabled', 'disabled');
+      /* enable ? fieldset.removeAttribute('disabled') : fieldset.setAttribute('disabled', 'disabled');
+      Error: Expected an assignment or function call and instead saw an expression*/
+      if (enable) {
+        fieldset.removeAttribute('disabled');
+      } else {
+        fieldset.setAttribute('disabled', 'disabled');
+      }
     });
 
     filters.forEach(function (filter) {
-      enable ? filter.removeAttribute('disabled') : filter.setAttribute('disabled', 'disabled');
+      /* enable ? filter.removeAttribute('disabled') : filter.setAttribute('disabled', 'disabled');*/
+      if (enable) {
+        filter.removeAttribute('disabled');
+      } else {
+        filter.setAttribute('disabled', 'disabled');
+      }
     });
   };
 
   var activatePage = function () {
     activateForm(true);
-    window.load(handleSuccessGetData, handleErrorMessage);
+    window.load(window.handleSuccessGetData, handleErrorMessage);
 
     mapClass.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
@@ -154,55 +172,16 @@
     });
 
     document.addEventListener('click', function () {
-      mapClass.removeChild(error);
+      /* mapClass.removeChild(error);*/
+      error.classList.add('hidden');
     });
 
     errorButton.addEventListener('click', function () {
-      mapClass.removeChild(error);
+      /* mapClass.removeChild(error);*/
+      error.classList.add('hidden');
     });
   };
 
-  var resetForm = function () {
-    /*установка дефолтных значений для поля «Адрес»*/
-    setDefaultAddress(xMuffin, yMuffin);
-
-    /*установка дефолтных значений для button.map__pin--main*/
-    mapPinMain.style.left = MainPin.DEFAULTX + 'px';
-    mapPinMain.style.top = MainPin.DEFAULTY + 'px';
-
-    /*сброс значения для поля «Заголовок объевления»*/
-    titleInput.value = '';
-
-    /*сброс значения для поля «Описание»*/
-    descriptionInput.value = '';
-
-    /*установка дефолтного значения для дропдаун листа «Тип жилья»*/
-    var typeHouseDefaultValue = window.typeHouse.querySelector('option[selected]').value;
-    window.typeHouse.value = typeHouseDefaultValue;
-
-    /*установка дефолтного значения для дропдаун листа «Цена за ночь»*/
-    window.price.value = window.minHousePrice[window.typeHouse.value];
-    window.price.setAttribute('min', minHousePrice[typeHouse.value]);
-
-    /*установка дефолтных значений для дропдаун листов «Время заезда и выезда»*/
-    var timeSelectDefaultValue = window.timeinSelect.querySelector('option[selected]').value;
-    window.timeinSelect.value = timeSelectDefaultValue;
-    window.timeoutSelect.value = timeSelectDefaultValue;
-
-    /*установка дефолтных значений для дропдаун листа «Кол-во комнат»*/
-    var roomsSelectDefaultValue = window.roomsSelect.querySelector('option[selected]').value;
-    window.roomsSelect.value = roomsSelectDefaultValue;
-
-    /*установка дефолтных значений для дропдаун листа «Количество гостей»*/
-    var guestsSelectDefaultValue = window.guestsSelect.querySelector('option[selected]').value;
-    window.guestsSelect.value = guestsSelectDefaultValue;
-
-    /*установка дефолтных стилей для чекбоксов .features__checkbox*/
-    var featuresCheckboxesList = document.querySelectorAll('.features input[name=features]:checked');
-    featuresCheckboxesList.forEach(function (featuresCheckbox) {
-      featuresCheckbox.checked = false;
-    });
-  };
 
   var deactivatePage = function () {
     activateForm(false);
@@ -220,19 +199,21 @@
   var handleSuccessSubmitForm = function () {
     var successTemplate = document.querySelector('#success').content.querySelector('.success');
     var successNode = successTemplate.cloneNode(true);
-    window.map.mapClass.appendChild(successNode);
+    mapClass.appendChild(successNode);
 
     document.addEventListener('click', function () {
-      window.map.mapClass.removeChild(successNode);
+      /* mapClass.removeChild(successNode);*/
+      successNode.classList.add('hidden');
     });
 
     document.addEventListener('keydown', function (evt) {
       if (evt.keyCode === window.card.ESC_KEYCODE) {
-        window.map.mapClass.removeChild(successNode);
-    };
+        /* mapClass.removeChild(successNode);*/
+        successNode.classList.add('hidden');
+      }
     });
     deactivatePage();
-    resetForm();
+    window.form.resetForm();
   };
 
   adForm.addEventListener('submit', function (evt) {
@@ -241,7 +222,12 @@
   });
 
   window.map = {
-    mapClass: mapClass
+    mapClass: mapClass,
+    mapPinMain: mapPinMain,
+    MainPin: MainPin,
+    xMuffin: xMuffin,
+    yMuffin: yMuffin,
+    setDefaultAddress: setDefaultAddress
   };
 
   activateForm(false);

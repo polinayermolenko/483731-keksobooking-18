@@ -15,13 +15,13 @@
     popup.classList.add('hidden');
   };
 
-  var onButtonCloseClick = function (setupClose, popup) {
+  var clickCloseButton = function (setupClose, popup) {
     setupClose.addEventListener('click', function () {
       closePopup(popup);
     });
   };
 
-  var onEscPress = function (setupClose, popup) {
+  var pressEsc = function (setupClose, popup) {
     setupClose.addEventListener('keydown', function (evt) {
       if (evt.keyCode === ESC_KEYCODE) {
         closePopup(popup);
@@ -48,13 +48,13 @@
    * @param {Array} adsItem - одно объявление из массива объявлений, полученного функцией generateAds
    */
 
-  window.renderCards = function (adsItem) {
+  var renderCards = function (adsItem) {
     var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
-    window.cardNode = cardTemplate.cloneNode(true);
+    var cardNode = cardTemplate.cloneNode(true);
     var cardClose = cardNode.querySelector('.popup__close');
 
-    onButtonCloseClick(cardClose, cardNode);
-    onEscPress(cardClose, cardNode);
+    clickCloseButton(cardClose, cardNode);
+    pressEsc(cardClose, cardNode);
 
     if (adsItem.length) {
       adsItem = adsItem[0];
