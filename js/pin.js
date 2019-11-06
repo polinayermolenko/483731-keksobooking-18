@@ -8,6 +8,10 @@
 
   var onPinClick = function (pinItem, cardItem) {
     pinItem.addEventListener('click', function () {
+
+      if (window.map.mapClass.contains(window.card.cardNode)) {
+        window.map.mapClass.removeChild(window.card.cardNode);
+      }
       window.card.renderCards(cardItem);
     });
   };
@@ -24,24 +28,34 @@
    * Отрисовывает метки на основе данных из массива объявлений
    * @param {Array} adsArray - массив объявлений полученный функцией generateAds
    */
+  var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+  var mapPin = document.querySelector('.map__pins');
+
+  var renderPins = function (advertisment) {
+    var buttonPin = pinTemplate.cloneNode(true);
+    buttonPin.style = 'left: ' + (advertisment.location.x - Pin.WIDTH / 2) + 'px; top: ' + (advertisment.location.y - Pin.HEIGHT) + 'px;';
+    var pinImage = buttonPin.querySelector('img');
+    pinImage.src = advertisment.author.avatar;
+    pinImage.alt = advertisment.offer.title;
+
+    onPinClick(buttonPin, advertisment);
+    onEnterPress(buttonPin, advertisment);
+
+    return buttonPin;
+  };
+
+
+  window.handleSuccessGetData = function (advertisments) {
+    var fragment = document.createDocumentFragment();
+    advertisments.forEach(function (adv) {
+      fragment.appendChild(renderPins(adv));
+    });
+    mapPin.appendChild(fragment);
+    window.card.renderCards(advertisments[0]);
+  };
+
   window.pin = {
-    renderPins: function (adsArray) {
-      var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-      var mapPin = document.querySelector('.map__pins');
-      var fragment = document.createDocumentFragment();
-
-      for (var i = 0; i < adsArray.length; i++) {
-        var pin = pinTemplate.cloneNode(true);
-        pin.style = 'left: ' + (adsArray[i].location.x - Pin.WIDTH / 2) + 'px; top: ' + (adsArray[i].location.y - Pin.HEIGHT) + 'px;';
-        var pinImage = pin.querySelector('img');
-        pinImage.src = adsArray[i].author.avatar;
-        pinImage.alt = adsArray[i].offer.title;
-        fragment.appendChild(pin);
-
-        onPinClick(pin, adsArray[i]);
-        onEnterPress(pin, adsArray[i]);
-      }
-      mapPin.appendChild(fragment);
-    }
+    renderPins: renderPins,
+    mapPin: mapPin
   };
 })();
