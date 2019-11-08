@@ -10,7 +10,11 @@
 
     xhr.addEventListener('load', function () {
       if (xhr.status === 200) {
+        window.advs = [];
+        advs = xhr.response;
         onSuccess(xhr.response);
+
+
       } else {
         onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }

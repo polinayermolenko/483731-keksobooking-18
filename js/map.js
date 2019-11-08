@@ -99,7 +99,7 @@
 
   var activatePage = function () {
     activateForm(true);
-    window.load(window.handleSuccessGetData, handleErrorMessage);
+    window.load(window.pin.handleSuccessGetData, handleErrorMessage);
 
     mapClass.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
@@ -193,7 +193,10 @@
       window.pin.mapPin.removeChild(pin);
     });
 
-    mapClass.removeChild(window.card.cardNode);
+    if (mapClass.contains(window.card.cardNode)) {
+      mapClass.removeChild(window.card.cardNode);
+    }
+
   };
 
   var handleSuccessSubmitForm = function () {
