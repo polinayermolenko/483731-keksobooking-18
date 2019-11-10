@@ -73,7 +73,7 @@
   var typeHouse = document.querySelector('#type');
   var price = document.querySelector('#price');
 
-  var minHousePrice = {
+  var minHousePriceMap = {
     'bungalo': 0,
     'flat': 1000,
     'house': 5000,
@@ -81,8 +81,8 @@
   };
 
   typeHouse.addEventListener('change', function () {
-    price.setAttribute('min', minHousePrice[typeHouse.value]);
-    price.setAttribute('placeholder', minHousePrice[typeHouse.value]);
+    price.setAttribute('min', minHousePriceMap[typeHouse.value]);
+    price.setAttribute('placeholder', minHousePriceMap[typeHouse.value]);
   });
 
   var resetForm = function () {
@@ -104,8 +104,8 @@
     typeHouse.value = typeHouseDefaultValue;
 
     /* установка дефолтного значения для дропдаун листа «Цена за ночь»*/
-    price.value = minHousePrice[typeHouse.value];
-    price.setAttribute('min', minHousePrice[typeHouse.value]);
+    price.value = minHousePriceMap[typeHouse.value];
+    price.setAttribute('min', minHousePriceMap[typeHouse.value]);
 
     /* установка дефолтных значений для дропдаун листов «Время заезда и выезда»*/
     var timeSelectDefaultValue = timeinSelect.querySelector('option[selected]').value;

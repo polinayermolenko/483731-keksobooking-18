@@ -31,7 +31,7 @@
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var mapPin = document.querySelector('.map__pins');
 
-  var renderPins = function (advertisment) {
+  var renderPin = function (advertisment) {
     var buttonPin = pinTemplate.cloneNode(true);
     buttonPin.style = 'left: ' + (advertisment.location.x - Pin.WIDTH / 2) + 'px; top: ' + (advertisment.location.y - Pin.HEIGHT) + 'px;';
     var pinImage = buttonPin.querySelector('img');
@@ -44,18 +44,23 @@
     return buttonPin;
   };
 
-
-  window.handleSuccessGetData = function (advertisments) {
+  var render = function (advertisments) {
     var fragment = document.createDocumentFragment();
-    advertisments.forEach(function (adv) {
-      fragment.appendChild(renderPins(adv));
+    advertisments.slice(0, 5).forEach(function (adv) {
+      fragment.appendChild(renderPin(adv));
     });
     mapPin.appendChild(fragment);
-    window.card.renderCards(advertisments[0]);
+  };
+
+  var handleSuccessGetData = function (data) {
+    render(data);
   };
 
   window.pin = {
-    renderPins: renderPins,
-    mapPin: mapPin
+    Pin: Pin,
+    renderPin: renderPin,
+    mapPin: mapPin,
+    handleSuccessGetData: handleSuccessGetData,
+    render: render
   };
 })();
