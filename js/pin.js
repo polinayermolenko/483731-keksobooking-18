@@ -46,7 +46,7 @@
 
   var render = function (advertisments) {
     var fragment = document.createDocumentFragment();
-    advertisments.forEach(function (adv) {
+    advertisments.slice(0, 5).forEach(function (adv) {
       fragment.appendChild(renderPin(adv));
     });
     mapPin.appendChild(fragment);
@@ -54,10 +54,10 @@
 
   var handleSuccessGetData = function (data) {
     render(data);
-    window.card.renderCards(data[0]);
   };
 
   window.pin = {
+    Pin: Pin,
     renderPin: renderPin,
     mapPin: mapPin,
     handleSuccessGetData: handleSuccessGetData,

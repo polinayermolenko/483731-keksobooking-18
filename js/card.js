@@ -42,6 +42,7 @@
    * Добавляет <img> в разметку
    * @param {node} - HTML node
    */
+  /*
   var addPhotos = function (node, data) {
     var divPhotos = node.querySelector('.popup__photos');
     for (var j = 1; j < data.offer.photos.length; j++) {
@@ -52,7 +53,7 @@
       newImg.src = data.offer.photos[j];
       divPhotos.appendChild(newImg);
     }
-  };
+  };*/
 
   /**
    * Отрисовывает объявления на основе данных из массива объявлений
@@ -63,7 +64,8 @@
     clickCloseButton(cardClose, cardNode);
     pressEsc(cardClose, cardNode);
 
-    addPhotos(cardNode, adsItem);
+    /*
+    addPhotos(cardNode, adsItem);*/
 
     cardNode.querySelector('.popup__avatar').src = adsItem.author.avatar;
     cardNode.querySelector('.popup__title').textContent = adsItem.offer.title;
