@@ -52,15 +52,23 @@
     mapPin.appendChild(fragment);
   };
 
+  var updatePins = function () {
+    render(advs.filter(window.filter.filterByHouseType).filter(window.filter.filterByPrice).filter(window.filter.filterByRooms).filter(window.filter.filterByGuests).filter(window.filter.filterByFeatures));
+  };
+
+  var advs = [];
+
   var handleSuccessGetData = function (data) {
-    render(data);
+    advs = data;
+    updatePins();
   };
 
   window.pin = {
     Pin: Pin,
+    advs: advs,
     renderPin: renderPin,
     mapPin: mapPin,
     handleSuccessGetData: handleSuccessGetData,
-    render: render
+    updatePins: updatePins
   };
 })();
