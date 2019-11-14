@@ -5,6 +5,7 @@
   var guestsSelect = document.querySelector('#capacity');
   var titleInput = document.querySelector('input[name=title]');
   var descriptionInput = document.querySelector('textarea[name=description]');
+  var resetButton = document.querySelector('.ad-form__reset');
 
 
   roomsSelect.addEventListener('change', function () {
@@ -125,7 +126,25 @@
     featuresCheckboxesList.forEach(function (featuresCheckbox) {
       featuresCheckbox.checked = false;
     });
+
+    var mapFilters = document.querySelectorAll('.map__filter');
+    mapFilters.forEach(function (filter) {
+      var filterDefaultValue = filter.querySelector('option[selected]').value;
+      filter.value = filterDefaultValue;
+    });
+
+    var mapFeatures = document.querySelectorAll('.map__checkbox:checked');
+    mapFeatures.forEach(function (feature) {
+      feature.checked = false;
+    });
   };
+
+  resetButton.addEventListener('click', function () {
+    resetForm();
+    window.map.deactivatePage();
+
+  });
+
 
   window.form = {
     resetForm: resetForm

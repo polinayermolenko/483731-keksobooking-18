@@ -6,24 +6,6 @@
     HEIGHT: 70
   };
 
-  var onPinClick = function (pinItem, cardItem) {
-    pinItem.addEventListener('click', function () {
-
-      if (window.map.mapClass.contains(window.card.cardNode)) {
-        window.map.mapClass.removeChild(window.card.cardNode);
-      }
-      window.card.renderCards(cardItem);
-    });
-  };
-
-  var onEnterPress = function (pinItem, cardItem) {
-    pinItem.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === window.card.ENTER_KEYCODE) {
-        window.card.renderCards(cardItem);
-      }
-    });
-  };
-
   /**
    * Отрисовывает метки на основе данных из массива объявлений
    * @param {Array} adsArray - массив объявлений полученный функцией generateAds
@@ -38,8 +20,26 @@
     pinImage.src = advertisment.author.avatar;
     pinImage.alt = advertisment.offer.title;
 
-    onPinClick(buttonPin, advertisment);
-    onEnterPress(buttonPin, advertisment);
+    var onPinClick = function () {
+      var activePin = window.map.mapClass.querySelector('.map__pin--active');
+      if (activePin) {
+        activePin.classList.remove('map__pin--active');
+      }
+      buttonPin.classList.add('map__pin--active');
+
+
+      window.card.removeCard();
+      window.card.renderCards(advertisment);
+    };
+
+    var onEnterPress = function (evt) {
+      if (evt.keyCode === window.card.ENTER_KEYCODE) {
+        window.card.renderCards(advertisment);
+      }
+    };
+
+    buttonPin.addEventListener('click', onPinClick);
+    buttonPin.addEventListener('keydown', onEnterPress);
 
     return buttonPin;
   };

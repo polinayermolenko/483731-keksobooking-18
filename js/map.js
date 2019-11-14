@@ -159,9 +159,9 @@
 
   var handleErrorMessage = function (errorMes) {
     var errorTemplate = document.querySelector('#error').content.querySelector('.error');
-    var errorButton = errorTemplate.querySelector('.error__button');
     var error = errorTemplate.cloneNode(true);
-    var errorMessage = errorTemplate.querySelector('.error__message');
+    var errorButton = error.querySelector('.error__button');
+    var errorMessage = error.querySelector('.error__message');
     errorMessage.textContent = errorMes;
     mapClass.appendChild(error);
 
@@ -171,14 +171,14 @@
       }
     });
 
-    document.addEventListener('click', function () {
-      /* mapClass.removeChild(error);*/
-      error.classList.add('hidden');
+    document.addEventListener('click', function (evt) {
+      if (evt.target !== errorButton) {
+        mapClass.removeChild(error);
+      }
     });
 
     errorButton.addEventListener('click', function () {
-      /* mapClass.removeChild(error);*/
-      error.classList.add('hidden');
+      mapClass.removeChild(error);
     });
   };
 
@@ -193,9 +193,7 @@
       window.pin.mapPin.removeChild(pin);
     });
 
-    if (mapClass.contains(window.card.cardNode)) {
-      mapClass.removeChild(window.card.cardNode);
-    }
+    window.card.removeCard();
 
   };
 
@@ -205,16 +203,15 @@
     mapClass.appendChild(successNode);
 
     document.addEventListener('click', function () {
-      /* mapClass.removeChild(successNode);*/
-      successNode.classList.add('hidden');
+      mapClass.removeChild(successNode);
     });
 
     document.addEventListener('keydown', function (evt) {
       if (evt.keyCode === window.card.ESC_KEYCODE) {
-        /* mapClass.removeChild(successNode);*/
-        successNode.classList.add('hidden');
+        mapClass.removeChild(successNode);
       }
     });
+
     deactivatePage();
     window.form.resetForm();
   };
@@ -230,7 +227,8 @@
     MainPin: MainPin,
     xMuffin: xMuffin,
     yMuffin: yMuffin,
-    setDefaultAddress: setDefaultAddress
+    setDefaultAddress: setDefaultAddress,
+    deactivatePage: deactivatePage
   };
 
   activateForm(false);

@@ -11,49 +11,49 @@
     'bungalo': 'Бунгало'
   };
 
-  var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
-  var cardNode = cardTemplate.cloneNode(true);
-  var cardClose = cardNode.querySelector('.popup__close');
-
   var removeCard = function () {
     var currentCard = document.querySelector('.popup');
 
     if (currentCard) {
+      var photos = currentCard.querySelectorAll('.popup__photo');
+      var photosContainer = currentCard.querySelector('.popup__photos');
+      photos.forEach(function (photo) {
+        photosContainer.removeChild(photo);
+      });
       window.map.mapClass.removeChild(currentCard);
     }
   };
 
-  var clickCloseButton = function (setupClose) {
-    setupClose.addEventListener('click', function () {
+  var deactivatePin = function () {
+    var activePin = window.map.mapClass.querySelector('.map__pin--active');
+    activePin.classList.remove('map__pin--active');
+  };
+
+  var onButtonCloseClick = function () {
+    deactivatePin();
+    removeCard();
+  };
+
+  var onEscPress = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      deactivatePin();
       removeCard();
-    });
+    }
   };
-
-  var pressEsc = function (setupClose) {
-    setupClose.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === ESC_KEYCODE) {
-        removeCard();
-      }
-    });
-  };
-
 
   /*
    * Добавляет <img> в разметку
    * @param {node} - HTML node
    */
-  /*
-  var addPhotos = function (node, data) {
+
+  var renderPhotos = function (data, node) {
     var divPhotos = node.querySelector('.popup__photos');
     for (var j = 1; j < data.offer.photos.length; j++) {
-      var newImg = document.createElement('img');
-      newImg.classList.add('popup__photo');
-      newImg.width = '55px';
-      newImg.height = '40px';
+      var newImg = divPhotos.querySelector('.popup__photo').cloneNode(true);
       newImg.src = data.offer.photos[j];
       divPhotos.appendChild(newImg);
     }
-  };*/
+  };
 
   /**
    * Отрисовывает объявления на основе данных из массива объявлений
@@ -61,11 +61,14 @@
    */
 
   var renderCards = function (adsItem) {
-    clickCloseButton(cardClose, cardNode);
-    pressEsc(cardClose, cardNode);
+    var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
+    var cardNode = cardTemplate.cloneNode(true);
+    var cardClose = cardNode.querySelector('.popup__close');
 
-    /*
-    addPhotos(cardNode, adsItem);*/
+    cardClose.addEventListener('click', onButtonCloseClick);
+    document.addEventListener('keydown', onEscPress);
+
+    renderPhotos(adsItem, cardNode);
 
     cardNode.querySelector('.popup__avatar').src = adsItem.author.avatar;
     cardNode.querySelector('.popup__title').textContent = adsItem.offer.title;
@@ -85,8 +88,6 @@
     removeCard: removeCard,
     renderCards: renderCards,
     ESC_KEYCODE: ESC_KEYCODE,
-    ENTER_KEYCODE: ENTER_KEYCODE,
-    cardTemplate: cardTemplate,
-    cardNode: cardNode
+    ENTER_KEYCODE: ENTER_KEYCODE
   };
 })();
