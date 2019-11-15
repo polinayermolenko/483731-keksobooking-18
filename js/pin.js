@@ -6,10 +6,6 @@
     HEIGHT: 70
   };
 
-  /**
-   * Отрисовывает метки на основе данных из массива объявлений
-   * @param {Array} adsArray - массив объявлений полученный функцией generateAds
-   */
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var mapPin = document.querySelector('.map__pins');
 
@@ -29,12 +25,12 @@
 
 
       window.card.removeCard();
-      window.card.renderCards(advertisment);
+      window.card.renderCard(advertisment);
     };
 
     var onEnterPress = function (evt) {
       if (evt.keyCode === window.card.ENTER_KEYCODE) {
-        window.card.renderCards(advertisment);
+        window.card.renderCard(advertisment);
       }
     };
 

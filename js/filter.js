@@ -15,14 +15,31 @@
     'low': 10000,
     'high': 50000
   };
-  var onFilterChange = function () {
+
+  var DEBOUNCE_INTERVAL = 500;
+
+  var debounce = function (cb) {
+    var lastTimeout = null;
+
+    return function () {
+      var parameters = arguments;
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(function () {
+        cb.apply(null, parameters);
+      }, DEBOUNCE_INTERVAL);
+    };
+  };
+
+  var onFilterChange = debounce(function () {
     var pins = window.pin.mapPin.querySelectorAll('.map__pin:not(.map__pin--main)');
     pins.forEach(function (pin) {
       window.pin.mapPin.removeChild(pin);
     });
     window.pin.updatePins();
     window.card.removeCard();
-  };
+  });
 
   filerForm.addEventListener('change', onFilterChange);
 
@@ -73,11 +90,11 @@
       return checkbox.value;
     });
     var filteredFeatures = [];
-    for (var i = 0; i < adv.offer.features.length; i++) {
-      if (checkedFeatures.indexOf(adv.offer.features[i]) !== -1) {
-        filteredFeatures.push(adv.offer.features[i]);
+    adv.offer.features.forEach(function (feature) {
+      if (checkedFeatures.indexOf(feature) !== -1) {
+        filteredFeatures.push(feature);
       }
-    }
+    });
     return filteredFeatures.length === checkedFeatures.length;
   };
 

@@ -28,11 +28,6 @@
   var xMuffin = parseInt(mapPinMain.style.left, 10);
   var yMuffin = parseInt(mapPinMain.style.top, 10);
 
-  /*
-   * Устанавливает координаты главной метки при неактивном режиме страницы
-   * @param {number} muffinLocationX - координата по оси х
-   * @param {number} muffinLocationY - координата по оси у
-   */
   var setDefaultAddress = function (muffinLocationX, muffinLocationY) {
     var xMuffinInactive = muffinLocationX + MainPin.WIDTH / 2;
     var yMuffinInactive = muffinLocationY + MainPin.HEIGHT / 2;
@@ -41,11 +36,6 @@
 
   setDefaultAddress(xMuffin, yMuffin);
 
-  /*
-   * Устанавливает координаты главной метки при активном режиме страницы
-   * @param {number} muffinLocationX - координата по оси х
-   * @param {number} muffinLocationY - координата по оси у
-   */
   var setAddress = function (pin, shiftX, shiftY) {
     var mainPinX = pin.offsetLeft - shiftX;
     var mainPinY = pin.offsetTop - shiftY;
@@ -78,8 +68,6 @@
     var filters = document.querySelectorAll('.map__filter');
 
     fieldsets.forEach(function (fieldset) {
-      /* enable ? fieldset.removeAttribute('disabled') : fieldset.setAttribute('disabled', 'disabled');
-      Error: Expected an assignment or function call and instead saw an expression*/
       if (enable) {
         fieldset.removeAttribute('disabled');
       } else {
@@ -88,7 +76,6 @@
     });
 
     filters.forEach(function (filter) {
-      /* enable ? filter.removeAttribute('disabled') : filter.setAttribute('disabled', 'disabled');*/
       if (enable) {
         filter.removeAttribute('disabled');
       } else {

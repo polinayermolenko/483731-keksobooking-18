@@ -41,26 +41,18 @@
     }
   };
 
-  /*
-   * Добавляет <img> в разметку
-   * @param {node} - HTML node
-   */
-
   var renderPhotos = function (data, node) {
+    var fragment = document.createDocumentFragment();
     var divPhotos = node.querySelector('.popup__photos');
     for (var j = 1; j < data.offer.photos.length; j++) {
       var newImg = divPhotos.querySelector('.popup__photo').cloneNode(true);
       newImg.src = data.offer.photos[j];
-      divPhotos.appendChild(newImg);
+      fragment.appendChild(newImg);
     }
+    divPhotos.appendChild(fragment);
   };
 
-  /**
-   * Отрисовывает объявления на основе данных из массива объявлений
-   * @param {Array} adsItem - одно объявление из массива объявлений, полученного функцией generateAds
-   */
-
-  var renderCards = function (adsItem) {
+  var renderCard = function (adsItem) {
     var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
     var cardNode = cardTemplate.cloneNode(true);
     var cardClose = cardNode.querySelector('.popup__close');
@@ -86,7 +78,7 @@
 
   window.card = {
     removeCard: removeCard,
-    renderCards: renderCards,
+    renderCard: renderCard,
     ESC_KEYCODE: ESC_KEYCODE,
     ENTER_KEYCODE: ENTER_KEYCODE
   };

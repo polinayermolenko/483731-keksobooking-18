@@ -57,8 +57,6 @@
     }
   });
 
-
-  /* Синхронизация полей «Время заезда» и «Время выезда»*/
   var timeinSelect = document.querySelector('#timein');
   var timeoutSelect = document.querySelector('#timeout');
 
@@ -70,7 +68,7 @@
     timeinSelect.value = timeoutSelect.value;
   });
 
-  /* Минимальное значение поля «Цена за ночь» зависит от значения поля «Тип жилья» */
+
   var typeHouse = document.querySelector('#type');
   var price = document.querySelector('#price');
 
@@ -87,41 +85,31 @@
   });
 
   var resetForm = function () {
-    /* установка дефолтных значений для поля «Адрес»*/
     window.map.setDefaultAddress(window.map.xMuffin, window.map.yMuffin);
 
-    /* установка дефолтных значений для button.map__pin--main*/
     window.map.mapPinMain.style.left = window.map.MainPin.DEFAULTX + 'px';
     window.map.mapPinMain.style.top = window.map.MainPin.DEFAULTY + 'px';
 
-    /* сброс значения для поля «Заголовок объевления»*/
     titleInput.value = '';
 
-    /* сброс значения для поля «Описание»*/
     descriptionInput.value = '';
 
-    /* установка дефолтного значения для дропдаун листа «Тип жилья»*/
     var typeHouseDefaultValue = typeHouse.querySelector('option[selected]').value;
     typeHouse.value = typeHouseDefaultValue;
 
-    /* установка дефолтного значения для дропдаун листа «Цена за ночь»*/
     price.value = minHousePriceMap[typeHouse.value];
     price.setAttribute('min', minHousePriceMap[typeHouse.value]);
 
-    /* установка дефолтных значений для дропдаун листов «Время заезда и выезда»*/
     var timeSelectDefaultValue = timeinSelect.querySelector('option[selected]').value;
     timeinSelect.value = timeSelectDefaultValue;
     timeoutSelect.value = timeSelectDefaultValue;
 
-    /* установка дефолтных значений для дропдаун листа «Кол-во комнат»*/
     var roomsSelectDefaultValue = roomsSelect.querySelector('option[selected]').value;
     roomsSelect.value = roomsSelectDefaultValue;
 
-    /* установка дефолтных значений для дропдаун листа «Количество гостей»*/
     var guestsSelectDefaultValue = guestsSelect.querySelector('option[selected]').value;
     guestsSelect.value = guestsSelectDefaultValue;
 
-    /* установка дефолтных стилей для чекбоксов .features__checkbox*/
     var featuresCheckboxesList = document.querySelectorAll('.features input[name=features]:checked');
     featuresCheckboxesList.forEach(function (featuresCheckbox) {
       featuresCheckbox.checked = false;
