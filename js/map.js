@@ -28,11 +28,6 @@
   var xMuffin = parseInt(mapPinMain.style.left, 10);
   var yMuffin = parseInt(mapPinMain.style.top, 10);
 
-  /*
-   * Устанавливает координаты главной метки при неактивном режиме страницы
-   * @param {number} muffinLocationX - координата по оси х
-   * @param {number} muffinLocationY - координата по оси у
-   */
   var setDefaultAddress = function (muffinLocationX, muffinLocationY) {
     var xMuffinInactive = muffinLocationX + MainPin.WIDTH / 2;
     var yMuffinInactive = muffinLocationY + MainPin.HEIGHT / 2;
@@ -41,11 +36,6 @@
 
   setDefaultAddress(xMuffin, yMuffin);
 
-  /*
-   * Устанавливает координаты главной метки при активном режиме страницы
-   * @param {number} muffinLocationX - координата по оси х
-   * @param {number} muffinLocationY - координата по оси у
-   */
   var setAddress = function (pin, shiftX, shiftY) {
     var mainPinX = pin.offsetLeft - shiftX;
     var mainPinY = pin.offsetTop - shiftY;
@@ -78,8 +68,6 @@
     var filters = document.querySelectorAll('.map__filter');
 
     fieldsets.forEach(function (fieldset) {
-      /* enable ? fieldset.removeAttribute('disabled') : fieldset.setAttribute('disabled', 'disabled');
-      Error: Expected an assignment or function call and instead saw an expression*/
       if (enable) {
         fieldset.removeAttribute('disabled');
       } else {
@@ -88,7 +76,6 @@
     });
 
     filters.forEach(function (filter) {
-      /* enable ? filter.removeAttribute('disabled') : filter.setAttribute('disabled', 'disabled');*/
       if (enable) {
         filter.removeAttribute('disabled');
       } else {
@@ -159,9 +146,9 @@
 
   var handleErrorMessage = function (errorMes) {
     var errorTemplate = document.querySelector('#error').content.querySelector('.error');
-    var errorButton = errorTemplate.querySelector('.error__button');
     var error = errorTemplate.cloneNode(true);
-    var errorMessage = errorTemplate.querySelector('.error__message');
+    var errorButton = error.querySelector('.error__button');
+    var errorMessage = error.querySelector('.error__message');
     errorMessage.textContent = errorMes;
     mapClass.appendChild(error);
 
@@ -171,14 +158,14 @@
       }
     });
 
-    document.addEventListener('click', function () {
-      /* mapClass.removeChild(error);*/
-      error.classList.add('hidden');
+    document.addEventListener('click', function (evt) {
+      if (evt.target !== errorButton) {
+        mapClass.removeChild(error);
+      }
     });
 
     errorButton.addEventListener('click', function () {
-      /* mapClass.removeChild(error);*/
-      error.classList.add('hidden');
+      mapClass.removeChild(error);
     });
   };
 
@@ -193,9 +180,7 @@
       window.pin.mapPin.removeChild(pin);
     });
 
-    if (mapClass.contains(window.card.cardNode)) {
-      mapClass.removeChild(window.card.cardNode);
-    }
+    window.card.removeCard();
 
   };
 
@@ -205,16 +190,15 @@
     mapClass.appendChild(successNode);
 
     document.addEventListener('click', function () {
-      /* mapClass.removeChild(successNode);*/
-      successNode.classList.add('hidden');
+      mapClass.removeChild(successNode);
     });
 
     document.addEventListener('keydown', function (evt) {
       if (evt.keyCode === window.card.ESC_KEYCODE) {
-        /* mapClass.removeChild(successNode);*/
-        successNode.classList.add('hidden');
+        mapClass.removeChild(successNode);
       }
     });
+
     deactivatePage();
     window.form.resetForm();
   };
@@ -230,7 +214,8 @@
     MainPin: MainPin,
     xMuffin: xMuffin,
     yMuffin: yMuffin,
-    setDefaultAddress: setDefaultAddress
+    setDefaultAddress: setDefaultAddress,
+    deactivatePage: deactivatePage
   };
 
   activateForm(false);

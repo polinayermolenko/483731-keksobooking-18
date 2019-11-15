@@ -6,28 +6,6 @@
     HEIGHT: 70
   };
 
-  var onPinClick = function (pinItem, cardItem) {
-    pinItem.addEventListener('click', function () {
-
-      if (window.map.mapClass.contains(window.card.cardNode)) {
-        window.map.mapClass.removeChild(window.card.cardNode);
-      }
-      window.card.renderCards(cardItem);
-    });
-  };
-
-  var onEnterPress = function (pinItem, cardItem) {
-    pinItem.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === window.card.ENTER_KEYCODE) {
-        window.card.renderCards(cardItem);
-      }
-    });
-  };
-
-  /**
-   * Отрисовывает метки на основе данных из массива объявлений
-   * @param {Array} adsArray - массив объявлений полученный функцией generateAds
-   */
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var mapPin = document.querySelector('.map__pins');
 
@@ -38,8 +16,26 @@
     pinImage.src = advertisment.author.avatar;
     pinImage.alt = advertisment.offer.title;
 
-    onPinClick(buttonPin, advertisment);
-    onEnterPress(buttonPin, advertisment);
+    var onPinClick = function () {
+      var activePin = window.map.mapClass.querySelector('.map__pin--active');
+      if (activePin) {
+        activePin.classList.remove('map__pin--active');
+      }
+      buttonPin.classList.add('map__pin--active');
+
+
+      window.card.removeCard();
+      window.card.renderCard(advertisment);
+    };
+
+    var onEnterPress = function (evt) {
+      if (evt.keyCode === window.card.ENTER_KEYCODE) {
+        window.card.renderCard(advertisment);
+      }
+    };
+
+    buttonPin.addEventListener('click', onPinClick);
+    buttonPin.addEventListener('keydown', onEnterPress);
 
     return buttonPin;
   };
@@ -52,15 +48,23 @@
     mapPin.appendChild(fragment);
   };
 
+  var updatePins = function () {
+    render(advs.filter(window.filter.filterByHouseType).filter(window.filter.filterByPrice).filter(window.filter.filterByRooms).filter(window.filter.filterByGuests).filter(window.filter.filterByFeatures));
+  };
+
+  var advs = [];
+
   var handleSuccessGetData = function (data) {
-    render(data);
+    advs = data;
+    updatePins();
   };
 
   window.pin = {
     Pin: Pin,
+    advs: advs,
     renderPin: renderPin,
     mapPin: mapPin,
     handleSuccessGetData: handleSuccessGetData,
-    render: render
+    updatePins: updatePins
   };
 })();
