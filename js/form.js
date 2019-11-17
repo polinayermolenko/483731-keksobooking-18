@@ -130,6 +130,12 @@
     mapFeatures.forEach(function (feature) {
       feature.checked = false;
     });
+
+    window.photo.avatar.src = 'img/muffin-grey.svg';
+    var pic = window.photo.picWrapper.querySelector('img');
+    if (pic) {
+      window.photo.picWrapper.removeChild(pic);
+    }
   };
 
   resetButton.addEventListener('click', function () {
