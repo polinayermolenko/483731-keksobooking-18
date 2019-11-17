@@ -41,19 +41,23 @@
     var mainPinY = pin.offsetTop - shiftY;
 
 
-    if (mainPinY < LocationMap.MIN_Y - (MainPin.HEIGHT + MainPin.POINTER)) {
+    if (mainPinY <= LocationMap.MIN_Y - (MainPin.HEIGHT + MainPin.POINTER)) {
       mapPinMain.style.top = LocationMap.MIN_Y - (MainPin.HEIGHT + MainPin.POINTER) + 'px';
+      mainPinY = LocationMap.MIN_Y;
     } else if (mainPinY > LocationMap.MAX_Y - (MainPin.HEIGHT + MainPin.POINTER)) {
       mapPinMain.style.top = LocationMap.MAX_Y - (MainPin.HEIGHT + MainPin.POINTER) + 'px';
+      mainPinY = LocationMap.MAX_Y;
     } else {
       mapPinMain.style.top = mainPinY + 'px';
       mainPinY = mainPinY + MainPin.HEIGHT + MainPin.POINTER;
     }
 
-    if (mainPinX < LocationMap.MIN_X - MainPin.WIDTH / 2) {
+    if (mainPinX <= LocationMap.MIN_X - MainPin.WIDTH / 2) {
       mapPinMain.style.left = LocationMap.MIN_X - MainPin.WIDTH / 2 + 'px';
+      mainPinX = LocationMap.MIN_X;
     } else if (mainPinX > LocationMap.MAX_X - MainPin.WIDTH / 2) {
       mapPinMain.style.left = LocationMap.MAX_X - MainPin.WIDTH / 2 + 'px';
+      mainPinX = LocationMap.MAX_X;
     } else {
       mapPinMain.style.left = mainPinX + 'px';
       mainPinX = mainPinX + MainPin.WIDTH / 2;
@@ -152,17 +156,23 @@
     errorMessage.textContent = errorMes;
     mapClass.appendChild(error);
 
-    document.addEventListener('keydown', function (evt) {
+    var onErrorEscClick = function (evt) {
       if (evt.keyCode === window.card.ESC_KEYCODE) {
         mapClass.removeChild(error);
       }
-    });
+      document.removeEventListener('keydown', onErrorEscClick);
+    };
 
-    document.addEventListener('click', function (evt) {
+    document.addEventListener('keydown', onErrorEscClick);
+
+    var onErrorClick = function (evt) {
       if (evt.target !== errorButton) {
         mapClass.removeChild(error);
       }
-    });
+      document.removeEventListener('click', onErrorClick);
+    };
+
+    document.addEventListener('click', onErrorClick);
 
     errorButton.addEventListener('click', function () {
       mapClass.removeChild(error);
@@ -189,23 +199,28 @@
     var successNode = successTemplate.cloneNode(true);
     mapClass.appendChild(successNode);
 
-    document.addEventListener('click', function () {
-      mapClass.removeChild(successNode);
-    });
-
-    document.addEventListener('keydown', function (evt) {
+    var onSuccessEscClick = function (evt) {
       if (evt.keyCode === window.card.ESC_KEYCODE) {
         mapClass.removeChild(successNode);
       }
-    });
+      document.removeEventListener('keydown', onSuccessEscClick);
+    };
+
+    var onSuccessClick = function () {
+      mapClass.removeChild(successNode);
+      document.removeEventListener('click', onSuccessClick);
+    };
+    document.addEventListener('click', onSuccessClick);
+
+    document.addEventListener('keydown', onSuccessEscClick);
 
     deactivatePage();
     window.form.resetForm();
   };
 
   adForm.addEventListener('submit', function (evt) {
-    window.upload(new FormData(adForm), handleSuccessSubmitForm, handleErrorMessage);
     evt.preventDefault();
+    window.upload(new FormData(adForm), handleSuccessSubmitForm, handleErrorMessage);
   });
 
   window.map = {
@@ -215,7 +230,8 @@
     xMuffin: xMuffin,
     yMuffin: yMuffin,
     setDefaultAddress: setDefaultAddress,
-    deactivatePage: deactivatePage
+    deactivatePage: deactivatePage,
+    adForm: adForm
   };
 
   activateForm(false);

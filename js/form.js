@@ -7,7 +7,6 @@
   var descriptionInput = document.querySelector('textarea[name=description]');
   var resetButton = document.querySelector('.ad-form__reset');
 
-
   roomsSelect.addEventListener('change', function () {
     if (roomsSelect.value === '1' && guestsSelect.value !== '1') {
       guestsSelect.setCustomValidity('для 1 гостя');
@@ -23,9 +22,12 @@
   });
 
   guestsSelect.addEventListener('change', function () {
-    if (guestsSelect.value === '1' && roomsSelect.value !== '1') {
-      guestsSelect.setCustomValidity('для 1 гостя');
-
+    if (guestsSelect.value === '1') {
+      if (roomsSelect.value === '100') {
+        guestsSelect.setCustomValidity('не для гостей');
+      } else {
+        guestsSelect.setCustomValidity('');
+      }
     } else if (guestsSelect.value === '2') {
       if (roomsSelect.value === '1') {
         guestsSelect.setCustomValidity('для 1 гостя');
@@ -38,24 +40,27 @@
       if (roomsSelect.value === '1') {
         guestsSelect.setCustomValidity('для 1 гостя');
       } else if (roomsSelect.value === '2') {
-        guestsSelect.setCustomValidity('для 2 гостей');
+        guestsSelect.setCustomValidity('для 1 гостя или 2 гостей');
       } else if (roomsSelect.value === '100') {
         guestsSelect.setCustomValidity('не для гостей');
       } else {
         guestsSelect.setCustomValidity('');
       }
     } else {
-      if (roomsSelect.value === '1') {
-        guestsSelect.setCustomValidity('для 1 гостя');
-      } else if (roomsSelect.value === '2') {
-        guestsSelect.setCustomValidity('для 2 гостей');
-      } else if (roomsSelect.value === '3') {
-        guestsSelect.setCustomValidity('для 3 гостей');
-      } else {
-        guestsSelect.setCustomValidity('');
+      if (guestsSelect.value === '0') {
+        if (roomsSelect.value === '1') {
+          guestsSelect.setCustomValidity('для 1 гостя');
+        } else if (roomsSelect.value === '2') {
+          guestsSelect.setCustomValidity('для 1 гостя или 2 гостей');
+        } else if (roomsSelect.value === '3') {
+          guestsSelect.setCustomValidity('для 1 гостя, 2 гостей или 3 гостей');
+        } else {
+          guestsSelect.setCustomValidity('');
+        }
       }
     }
   });
+
 
   var timeinSelect = document.querySelector('#timein');
   var timeoutSelect = document.querySelector('#timeout');
