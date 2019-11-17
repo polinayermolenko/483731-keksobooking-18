@@ -161,6 +161,7 @@
         mapClass.removeChild(error);
       }
       document.removeEventListener('keydown', onErrorEscClick);
+      error.removeEventListener('click', onErrorClick);
     };
 
     document.addEventListener('keydown', onErrorEscClick);
@@ -169,10 +170,11 @@
       if (evt.target !== errorButton) {
         mapClass.removeChild(error);
       }
-      document.removeEventListener('click', onErrorClick);
+      error.removeEventListener('click', onErrorClick);
+      document.removeEventListener('keydown', onErrorEscClick);
     };
 
-    document.addEventListener('click', onErrorClick);
+    error.addEventListener('click', onErrorClick);
 
     errorButton.addEventListener('click', function () {
       mapClass.removeChild(error);
@@ -204,11 +206,13 @@
         mapClass.removeChild(successNode);
       }
       document.removeEventListener('keydown', onSuccessEscClick);
+      document.removeEventListener('click', onSuccessClick);
     };
 
     var onSuccessClick = function () {
       mapClass.removeChild(successNode);
       document.removeEventListener('click', onSuccessClick);
+      document.removeEventListener('keydown', onSuccessEscClick);
     };
     document.addEventListener('click', onSuccessClick);
 
